@@ -1,0 +1,77 @@
+Audio Transcription and Sentiment Analysis with Chatbot Integration
+
+This project provides a FastAPI-based application for transcribing audio files, analyzing sentiments, and interacting with transcriptions via a chatbot interface. The application supports audio processing, sentiment analysis, and conversation with transcription data using AWS services and AI models.
+
+Python Version: Compatible with 3.8 and above.(Currently used 3.12.3)
+
+Features:
+Audio Processing: Upload audio files, process them to reduce noise, normalize, and segment them.
+Transcription: Transcribe audio files using AWS Transcribe.
+Sentiment Analysis: Analyze sentiments of transcribed text using AWS Comprehend.
+Chatbot Integration: Generate summaries, Q&A, and interact with transcriptions using a chatbot model.
+
+Install Dependencies: pip install -r requirements.txt
+
+Configure AWS Credentials
+
+Ensure that your AWS credentials are set up. You can use environment variables or the aws configure command to set up the AWS credentials.
+
+Create the uploads and transcripts directories: mkdir uploads transcripts
+
+Running the Application: uvicorn main:app --reload
+
+
+Endpoints
+1. Home Page
+URL: /
+Method: GET
+Description: Displays the main page for file upload and interaction.
+
+2. Transcribe and Analyze
+URL: /transcribe_and_analyze
+Method: POST
+Description: Uploads an audio file, transcribes it, performs sentiment analysis, and displays the results.
+Form Data:
+file: The audio file to be processed.
+
+3. Generate Summary
+URL: /generate
+Method: POST
+Description: Generates a summary based on a transcript file and text prompt.
+Form Data:
+file: The transcript file.
+text_prompt: The prompt for generating a summary.
+
+4. Generate Q&A
+URL: /generate_qna
+Method: POST
+Description: Generates Q&A based on a transcript file and Q&A prompt.
+Form Data:
+    file: The transcript file.
+    qna_prompt: The prompt for generating Q&A.
+
+5. Chatbot
+URL: /chatbot
+Method: GET
+Description: Displays the chatbot interface for interacting with transcript data.
+Query Parameters:
+    transcript_file: The transcript file to chat with.
+URL: /chat_with_transcript
+Method: POST
+Description: Sends a chat prompt to the chatbot and receives a response.
+Form Data:
+    chat_prompt: The prompt for the chatbot.
+    transcript_file: The transcript file to chat with.
+
+Directory Structure
+main.py: Main FastAPI application file.
+result.py: File containing additional routes and functions for interacting with the AI model.
+templates/: Directory containing HTML templates for the application.
+static/: Directory for serving static files like CSS and JavaScript.
+uploads/: Directory for storing uploaded audio files.
+transcripts/: Directory for storing generated transcript files.
+
+Troubleshooting
+Missing Dependencies: Ensure all required Python packages are installed.
+AWS Configuration: Verify that AWS credentials are correctly configured.
+File Not Found Errors: Make sure that the required directories (uploads and transcripts) exist and are accessible.

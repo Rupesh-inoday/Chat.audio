@@ -1,0 +1,9 @@
+Steps to execute the above app
+ 
+Step 1: Open VSCODE or any ide
+Step 2: Open the terminal and then type- ".venv/Scripts/Activate"  and press enter, then install the required packages by entering command "pip install -r requirements.txt" in the terminal.
+Step 3: After entering into the virtual environment and installing all packages, please run the "aws configure" command in the terminal.
+Step 4: It will then ask for the access key and secret key. Enter Access key the press enter and then secret key provided in the above shared csv file i.e. "inoday.ai_accessKeys.csv" and then press enter.
+Step 5: After that it will ask for region. Type "us-east-1" then press enter.
+Step 6: Then It will ask for format. Type json then press enter. aws setup is done after this.
+Step 7: type "uvicorn main:app" and then it will execute on local host 8000

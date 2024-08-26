@@ -1,0 +1,165 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background-color: #3498db;
+    color: white;
+    padding: 4px 0;
+    text-align: center;
+}
+
+.container {
+    width: 70%;
+    margin: 20px auto 80px auto; /* Added bottom margin */
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #f1f5f8ec;
+}
+
+.form-group {
+    margin-bottom: 40px; /* Reduced margin */
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+input[type="file"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+.chat-btn {
+    background-color: #1ac72b;
+}
+
+.chat-btn:hover {
+    background-color: #1ac72b;
+}
+
+.transcript-section {
+    margin-top: 20px;
+}
+
+/* Add spacing for the button */
+.transcript-section .chat-btn {
+    display: inline-block; /* Ensures the button is treated as a block-level element */
+    margin-top: 20px; /* Adjust the value to increase or decrease space above the button */
+}
+
+#qna-form {
+    margin-top: 30px; /* Increased spacing for clarity */
+}
+
+.transcript {
+    white-space: pre-wrap;
+    background-color: #f8f8f8;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    word-wrap: break-word; /* Ensure long words break and wrap */
+    word-break: break-all; /* Break long words if necessary */
+}
+
+
+footer {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Styles for the loading overlay */
+.loading-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Styles for the loading spinner */
+.loading-icon {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 2s linear infinite;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: flex-start; /* Align logos to the left */
+    align-items: left;
+    margin: 5px auto;
+}
+.logo-container img {
+    width: 10%; /* Adjust this percentage to increase or decrease the size */
+    margin: 0 5px;
+}
+
+/* Keyframes for spinning animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.response {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-width: 100%;
+    overflow-x: auto;
+}

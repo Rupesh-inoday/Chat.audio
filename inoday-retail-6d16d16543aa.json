@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "inoday-retail",
+  "private_key_id": "6d16d16543aae0ba1101c4fb6dd8157ab11928f5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCrNVnpJt09uLMl\nManBHhc7jii00/29O2SOGEdHpSxVJm6FXralUcOOUwAWEmtYis5y3B1vW/Y9fw2g\nmR/gHZ4itx5uOzXN32RqkX4wWle19XXjrHTaag75dfhDJmsw163pATXRlm0pwvnq\niwXx90E6DvHRy2dC+IjuzRtUfyI6HUaWj7yEN3E8wNxkhqQsYcLsSnQ1E16I5jX+\niL/Ic8Enj6+o1RumQ6021sLWIMYQSAlq/LgNtRCAdijZckxQKfjc+td/3vLB6Wwt\nU5pC9YqQsxQkBX8ZoPD0/h/LfZwyNkSvxMkWovzBHCGIjXsbM5qgQPkft/LHvctr\nJ7JlAnkHAgMBAAECggEAAOlBJ9yiquiF6SX7sZgIqZQtUly48G/5gCnutrNltvt+\n4Lh35iwYfBL2AeWA/5YiKp3hjYB3K0cOCuQuDIIIAP8DVDnuuRJNbElysiJr1I7Q\ne57ielGTGQbkoz6wZco/GKHvPH1AHW+P3TWVHnUUoMQNUKXvA1UMrVnKc4EWvte9\n+YNCwQKdOu02LF81PlmDadSIV08ZuNjYV1LcTmua14sPEzRuOUzSAT7qzVNkM5vs\nAA7TYXEqzDytmxnHOjTbBpqOVn0klz9Eybs0vR7xEV+QTvf5p7B1bmKMaJFgqPgg\nD+9Er26c1HJjCC2vXINefOlHCs95pRZa6+J9PcxC0QKBgQDTw/vxc7VIIzsgzK/S\na/Lvapp0kVFx9n7sFlXDPYte4i5HwZSUeluqtob/Z0SyxV/HgwKDpZ/M5JlKhf/C\n1uf856Rojdspytis35c0qWsVg8sxJWINYVRfO+DWGb/ihOE2yxTKUIcD2ARwTIey\nye4MSNfkv8RT7XwEKiUOi1VhEQKBgQDO+Jno5n0y0S3naNkr4xRSxwA3Ebjq1YsZ\n7V193taa4obIJBhyK/KAjTptka9Puo8Od+/uEfsL0p8FRazAPYYTFFcE+ADodd6P\nkK4P5PcNMeeqSt4dzqVwpZ61lBGkwOG8icwmqI98WnOw793Hws/S3cFlz+p6fS/3\nI6wgucK4lwKBgQCetxH6iq2BDp6/W4ofnLasiGqRGWVAk+3Wxnqq5VKy37SuJUFV\n80sG7NzLSbvsfQ/nOaLFxnm5mE/n0fy6LFYdcAQCNOfhL94r2zy5xIy0yF2fTRRr\nUNpqsjc2YIA3pz4g0h6X77jxwZK6FDHUZ5IZ9PKSyMO9342GlYvGldl88QKBgDL+\nV1VlrIUfurKgR5mjijdW5nuq9yeM04fgzr8bbz6b/19CXW+L2mTH5xRl5466RVLo\nRAohDfx8uUdgQk7fGbCLu2DzBa5AlERE/k3WOPRcTlrLtWwcpPBbLf5I7Avupe+A\n9/ayYx/dXVHD153HJtMqZeMC1h+1xmKavGcXvZ0jAoGBAK5EX6rI1jv4uLlruszA\nb+DtHBoITV9v9ZF3gytb5fpsljFRiPb2B4kONbKye5KBbJVZMRpKdVGdeuqxScMr\niqNli+T4LH+KyRCSFk5IkzB6yRJ1lqxVlZtkOcfRcja6CHoecBBjRDv8fg9b3CeI\nyw0eYuP9JU8i0nx7l3EFQwZW\n-----END PRIVATE KEY-----\n",
+  "client_email": "inoday-retail@appspot.gserviceaccount.com",
+  "client_id": "114683271369854452905",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/inoday-retail%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

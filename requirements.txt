@@ -16,3 +16,4 @@ starlette
 itsdangerous
 python-multipart
 pydub
+vertexai

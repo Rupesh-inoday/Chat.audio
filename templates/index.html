@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Transcript and Evaluation</title>
+    <link rel="icon" href="/static/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        canvas {
+            width: 85% !important;
+            height: 85% !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Audio Transcript and Evaluation</h1>
+    </header>
+
+    <div class="container">
+        <form id="upload-form" action="/transcribe_and_analyze" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload Audio File:</label>
+                <input type="file" id="file" name="file" required>
+            </div>
+            <button type="submit" class="btn" id="transcribe-button">Transcribe</button>
+        </form>
+
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-icon"></div>
+            <p>Loading... Please wait.</p>
+        </div>
+
+        {% if transcript %}
+        <div class="transcript-section">
+            <h2>Transcript:</h2>
+            <div class="transcript">
+                <pre>{{ transcript }}</pre>
+            </div>
+            <a href="/chatbot?transcript_file={{ transcript_file }}" class="btn chat-btn">Chat with Transcript</a>
+
+            <h2>Sentiment Analysis:</h2>
+            <div class="sentiment-analysis">
+                <div class="chart-container">
+                    <div>
+                        <h3>Speaker 0 Sentiments</h3>
+                        <ul>
+                            {% for sentiment in speaker_sentiments.get('spk_0', []) %}
+                                <li style="color: {{ 'green' if (sentiment['Positive'] * 100) >= 35 else 'red' }}">Positive: {{ (sentiment['Positive'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Negative'] * 100) >= 35 else 'red' }}">Negative: {{ (sentiment['Negative'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Neutral'] * 100) >= 35 else 'red' }}">Neutral: {{ (sentiment['Neutral'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Mixed'] * 100) >= 35 else 'red' }}">Mixed: {{ (sentiment['Mixed'] * 100) | round(2) }}%</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <canvas id="speaker1Chart"></canvas>
+                </div>
+
+                <div class="chart-container" style="margin-top: 20px;">
+                    <div>
+                        <h3>Speaker 1 Sentiments</h3>
+                        <ul>
+                            {% for sentiment in speaker_sentiments.get('spk_1', []) %}
+                                <li style="color: {{ 'green' if (sentiment['Positive'] * 100) >= 35 else 'red' }}">Positive: {{ (sentiment['Positive'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Negative'] * 100) >= 35 else 'red' }}">Negative: {{ (sentiment['Negative'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Neutral'] * 100) >= 35 else 'red' }}">Neutral: {{ (sentiment['Neutral'] * 100) | round(2) }}%</li>
+                                <li style="color: {{ 'green' if (sentiment['Mixed'] * 100) >= 35 else 'red' }}">Mixed: {{ (sentiment['Mixed'] * 100) | round(2) }}%</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <canvas id="speaker2Chart"></canvas>
+                </div>
+            </div>
+
+            <form id="evaluation-form" action="/generate" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="file" value="{{ transcript_file }}">
+                    <label for="model_choice">Select Model:</label>
+                    <select id="model_choice" name="model_choice" class="form-control" required>
+                        <option value="Jamba2">Jamba2</option>
+                        <option value="Gemini">Gemini</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="text_prompt">Evaluation Text Prompt:</label>
+                    <textarea id="text_prompt" name="text_prompt" rows="4" required>
+Analyze the conversation transcript and evaluate it based on the following key points. Present the results clearly, with each key point listed followed by its score. Make sure the scores are displayed in **bold** for emphasizing the score.
+**Evaluation Criteria:**
+
+1. **Friendly yet professional tone used throughout the call:**  
+   Score: **[0-10]**
+
+2. **Contact info gathered such as Customer's Name, Station, Phone number, Email address(either documented in NetSuite already or gathered during call):**  
+   Score: **[0-5]**
+
+3. **Expectations were set with the customer including Clarification of Terms, Mutual Understanding, Documentation of Agreement, Setting the Stage for Future Interaction, Analyzing Communication Effectiveness, Impact on Customer Satisfaction:**  
+   Score: **[0-5]**
+
+4. **Understood the customer's issue including Identification of the Problem, Active Listening, Empathy and Validation, Effective Communication, Problem-Solving Approach, Customer Satisfaction, Follow-Up Actions:**  
+   Score: **[0-10]**
+
+5. **Logical troubleshooting was performed including Structured Problem-Solving, Step-by-Step Process, Use of Diagnostic Tools, Elimination of Variables, Evidence-Based Decisions, Clear Communication, Problem Resolution:**  
+   Score: **[0-30]**
+
+6. **Appropriate tools were used to deal with issue such as Selection of Tools, Tool Utilization, Tool Relevance, Integration with Problem-Solving, Customer Communication, Efficiency and Accuracy, Tool Limitations, Training and Expertise, Documentation and Follow-Up:**  
+   Score: **[0-10]**
+
+7. **Call is driven towards a resolution including Focus on Resolution, Effective Problem-Solving, Structured Approach, Customer Engagement, Managing Expectations, Overcoming Obstacles, Summarizing and Confirming, Resolution Verification, Documentation:**  
+   Score: **[0-10]**
+
+Please provide the evaluation scores for each criterion in the format specified above. The total possible score is 80. Calculate the total score obtained and convert it to a percentage out of 100.
+                    </textarea>
+                </div>
+                <button type="submit" class="btn">Evaluate</button>
+            </form>
+
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-icon"></div>
+                <p>Loading... Please wait.</p>
+            </div>
+
+            <form id="qna-form" action="/generate_qna" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="file" value="{{ transcript_file }}">
+                    <label for="model_choice">Select Model:</label>
+                    <select id="model_choice" name="model_choice" class="form-control" required>
+                        <option value="Jamba2">Jamba2</option>
+                        <option value="Gemini">Gemini</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="qna_prompt">Q&A Text Prompt:</label>
+                    <textarea id="qna_prompt" name="qna_prompt" rows="6" required>
+Please analyze the conversation transcript and provide answers to the following questions. Present each answer clearly, and ensure that key information is emphasized for clarity.
+
+Questions:
+
+Documented Customer Contact Info:
+Provide the documented contact information for the customer, including Name, Station, Phone Number, and Email Address (if available).
+
+Exhibited Call Control:
+Did the agent exhibit effective call control throughout the conversation? Explain briefly.
+
+Listening and Interaction:
+Was the agent attentive to the customer, avoiding frequent interruptions and remaining calm under pressure? Provide details.
+
+Follow-Up Offer:
+Did the agent offer to follow up with the client if required? Explain.
+
+Probing Questions:
+Did the agent ask probing questions to identify the core issue? Provide examples.
+
+Correct Tools Used:
+Were the appropriate tools used during the call? Specify which tools were used and how they were applied.
+
+Troubleshooting Steps:
+Were the troubleshooting steps correct and properly noted? Detail the steps taken.
+
+Adjustment for Recent Changes:
+Did the agent adjust their approach for any recent changes? Explain any adjustments made.
+
+Core Issue Identification:
+Was the core issue correctly identified during the conversation? Provide details.
+
+Description of Problem and Solution:
+Did the agent provide the customer with a clear description of the problem and the proposed solution or workaround? Describe how this was done.
+
+Documented Next Steps:
+Were the next steps documented? If so, provide the documented next steps.
+                    </textarea>
+                </div>
+                <button type="submit" class="btn">Answers</button>
+            </form>
+
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-icon"></div>
+                <p>Loading... Please wait.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Inoday Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function() {
+            document.getElementById('loading-overlay').style.display = 'flex';
+        });
+
+        {% if transcript %}
+        const speaker1Data = {
+            labels: ['Positive', 'Negative', 'Neutral', 'Mixed'],
+            datasets: [{
+                data: [
+                    {{ speaker_sentiments['spk_0'][0]['Positive'] * 100 }},
+                    {{ speaker_sentiments['spk_0'][0]['Negative'] * 100 }},
+                    {{ speaker_sentiments['spk_0'][0]['Neutral'] * 100 }},
+                    {{ speaker_sentiments['spk_0'][0]['Mixed'] * 100 }}
+                ],
+                backgroundColor: ['#4CAF50', '#F44336', '#FFC107', '#9E9E9E']
+            }]
+        };
+
+        const speaker2Data = {
+            labels: ['Positive', 'Negative', 'Neutral', 'Mixed'],
+            datasets: [{
+                data: [
+                    {{ speaker_sentiments['spk_1'][0]['Positive'] * 100 }},
+                    {{ speaker_sentiments['spk_1'][0]['Negative'] * 100 }},
+                    {{ speaker_sentiments['spk_1'][0]['Neutral'] * 100 }},
+                    {{ speaker_sentiments['spk_1'][0]['Mixed'] * 100 }}
+                ],
+                backgroundColor: ['#4CAF50', '#F44336', '#FFC107', '#9E9E9E']
+            }]
+        };
+
+        const ctx1 = document.getElementById('speaker1Chart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'pie',
+            data: speaker1Data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+
+        const ctx2 = document.getElementById('speaker2Chart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'pie',
+            data: speaker2Data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
+        {% endif %}
+    </script>
+</body>
+</html>

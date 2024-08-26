@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A Results</title>
+    <link rel="icon" href="/static/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+</head>
+<body>
+    <header>
+        <h1>Q&A Results</h1>
+    </header>
+
+    <div class="container">
+        <div class="qna-section">
+            <h2>Q&A Answers:</h2>
+            <ul>
+                {% if qna_answers %}
+                    {% for answer in qna_answers.split('\n') %}
+                        <li>{{ answer }}</li>
+                    {% endfor %}
+                {% else %}
+                    <p>No answers available.</p>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Inoday Inc. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+
+

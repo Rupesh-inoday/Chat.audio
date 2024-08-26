@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Results</title>
+    <link rel="icon" href="/static/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+</head>
+<body>
+    <header>
+        <h1>Evaluation Results</h1>
+    </header>
+
+    <div class="container">
+        <div class="result-section">
+            <h2>Evaluation Summary:</h2>
+            <ul>
+                {% for point in evaluation_summary.split('\n') %}
+                    <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Inoday Inc. All rights reserved.</p>
+    </footer>
+</body>
+</html>

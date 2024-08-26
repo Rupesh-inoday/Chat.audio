@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Transcript</title>
+    <link rel="icon" href="/static/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        .response {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-width: 100%;
+            overflow-x: auto;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Chat with Transcript</h1>
+    </header>
+
+    <div class="container">
+        <form id="chat-form" action="/chat_with_transcript" method="post">
+            <input type="hidden" name="transcript_file" value="{{ transcript_file }}">
+            
+            <div class="form-group">
+                <label for="model_choice">Select Model:</label>
+                <select id="model_choice" name="model_choice" class="form-control" required>
+                    <option value="Gemini">Gemini</option>
+                    <option value="Jamba2">Jamba2</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="chat_prompt">Enter your message:</label>
+                <textarea id="chat_prompt" name="chat_prompt" rows="6" placeholder="Ask questions or provide prompts related to the transcript..." required></textarea>
+            </div>
+            <button type="submit" class="btn">Send</button>
+        </form>
+
+        {% if chat_response %}
+        <div class="response-section">
+            <h2>Chat Response:</h2>
+            <div class="response">
+                <pre>{{ chat_response }}</pre>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Inoday Inc. All rights reserved.</p>
+    </footer>
+</body>
+</html>

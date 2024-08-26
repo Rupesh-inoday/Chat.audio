@@ -15,8 +15,8 @@ logging.basicConfig(level=logging.DEBUG)
 router = APIRouter()
 
 # Load AWS credentials from environment variables (Jamba)
-aws_access_key_id = os.getenv("")
-aws_secret_access_key = os.getenv("/bLONwDcKRTzRxFTQEHY+chwtuX0IxnCtQoTSOpD")
+aws_access_key_id = os.getenv("AKIAZAEPOFHEY7P43HVF")
+aws_secret_access_key = os.getenv("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")
 aws_region = "us-east-1"
 
 # Initialize Vertex AI with credentials (Gemini)

@@ -3,9 +3,6 @@ import time
 import json
 import boto3
 import requests
-import noisereduce as nr
-import numpy as np
-import spacy
 from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -14,6 +11,10 @@ from result import router as result_router
 from pydub import AudioSegment
 from pydub.effects import normalize
 from pydub.silence import split_on_silence
+import numpy as np
+import noisereduce as nr
+from scipy.io import wavfile
+import librosa
 
 app = FastAPI()
 
@@ -25,24 +26,44 @@ templates = Jinja2Templates(directory="templates")
 
 app.include_router(result_router)
 
-# Load spaCy model for NER
-nlp = spacy.load('en_core_web_sm')
-
 def upload_to_s3(local_file_path, bucket_name, s3_file_path):
     s3 = boto3.client('s3')
     s3.upload_file(local_file_path, bucket_name, s3_file_path)
     return f"s3://{bucket_name}/{s3_file_path}"
 
 def reduce_noise(audio_segment):
+    # Convert AudioSegment to raw audio data
     audio_data = np.array(audio_segment.get_array_of_samples())
-    reduced_noise_audio_data = nr.reduce_noise(y=audio_data, sr=audio_segment.frame_rate)
-    return AudioSegment(reduced_noise_audio_data.tobytes(), frame_rate=audio_segment.frame_rate, sample_width=audio_segment.sample_width, channels=audio_segment.channels)
+    sample_rate = audio_segment.frame_rate
+    
+    # Perform noise reduction
+    reduced_noise_data = nr.reduce_noise(y=audio_data, sr=sample_rate)
+    
+    # Convert back to AudioSegment
+    reduced_noise_audio = AudioSegment(
+        reduced_noise_data.tobytes(), 
+        frame_rate=sample_rate,
+        sample_width=audio_segment.sample_width, 
+        channels=audio_segment.channels
+    )
+    
+    return reduced_noise_audio
 
 def normalize_audio(audio_segment):
     return normalize(audio_segment)
 
-def segment_audio(audio_segment, min_silence_len=1000, silence_thresh=-16):
-    return split_on_silence(audio_segment, min_silence_len=min_silence_len, silence_thresh=silence_thresh)
+def segment_audio(audio_segment, min_silence_len=500, silence_thresh=-40):
+    """
+    Improved audio segmentation with finer control over silence detection.
+    - min_silence_len: Duration of silence in ms to consider it as a segment.
+    - silence_thresh: Silence threshold in dBFS.
+    """
+    return split_on_silence(
+        audio_segment, 
+        min_silence_len=min_silence_len, 
+        silence_thresh=silence_thresh,
+        keep_silence=200  # Retain a bit of silence for smoother transitions
+    )
 
 def process_audio(file_path):
     audio = AudioSegment.from_file(file_path)
@@ -65,7 +86,7 @@ def process_audio(file_path):
 
     return segment_files
 
-def transcribe_audio_with_custom_vocab(local_file_path, bucket_name, vocabulary_name):
+def transcribe_audio(local_file_path, bucket_name):
     transcribe = boto3.client('transcribe')
     
     job_name = f"{os.path.basename(local_file_path).split('.')[0]}-{int(time.time())}"
@@ -77,11 +98,7 @@ def transcribe_audio_with_custom_vocab(local_file_path, bucket_name, vocabulary_
         Media={'MediaFileUri': job_uri},
         MediaFormat='mp3',
         LanguageCode='en-US',
-        Settings={
-            'ShowSpeakerLabels': True, 
-            'MaxSpeakerLabels': 2,
-            'VocabularyName': vocabulary_name
-        }
+        Settings={'ShowSpeakerLabels': True, 'MaxSpeakerLabels': 2}
     )
 
     while True:
@@ -98,12 +115,6 @@ def transcribe_audio_with_custom_vocab(local_file_path, bucket_name, vocabulary_
         return results
     
     return None
-
-def extract_names_from_transcript(transcript_results):
-    transcript_text = ' '.join(item['alternatives'][0]['content'] for item in transcript_results['items'] if item['type'] == 'pronunciation')
-    doc = nlp(transcript_text)
-    names = [ent.text for ent in doc.ents if ent.label_ == 'PERSON']
-    return names
 
 def chunk_text(text, max_bytes):
     chunks = []
@@ -240,14 +251,13 @@ def get_form(request: Request):
 async def transcribe_and_analyze(request: Request, file: UploadFile = File(...)):
     local_file_path = os.path.join("uploads", file.filename)
     bucket_name = "inoday-bedrock-chat-pdf"
-    vocabulary_name = "MyVocab01"
 
     os.makedirs("uploads", exist_ok=True)
 
     with open(local_file_path, "wb") as f:
         f.write(await file.read())
 
-    transcript_results = transcribe_audio_with_custom_vocab(local_file_path, bucket_name, vocabulary_name)
+    transcript_results = transcribe_audio(local_file_path, bucket_name)
     
     if transcript_results:
         formatted_transcript = format_transcript(transcript_results)
@@ -257,15 +267,17 @@ async def transcribe_and_analyze(request: Request, file: UploadFile = File(...))
         transcript_text = ' '.join(item['alternatives'][0]['content'] for item in transcript_results['items'] if item['type'] == 'pronunciation')
         chunks = chunk_text(transcript_text, max_bytes=4500)
         sentiments = analyze_transcript_chunks_detailed(chunks)
-        sentiment_per_speaker = analyze_sentiment_per_speaker(transcript_results)
-        conversation_rating = rate_conversation(sentiments)
-        detected_names = extract_names_from_transcript(transcript_results)
+        rating = rate_conversation(sentiments)
+
+        speaker_sentiments = analyze_sentiment_per_speaker(transcript_results)
         
-        return JSONResponse(content={
-            "transcript_file_path": transcript_file_path,
-            "sentiment_per_speaker": sentiment_per_speaker,
-            "conversation_rating": conversation_rating,
-            "detected_names": detected_names
+        return templates.TemplateResponse("index.html", {
+            "request": request,
+            "transcript": formatted_transcript,
+            "transcript_file": transcript_filename,
+            "conversation_rating": rating,
+            "speaker_sentiments": speaker_sentiments
         })
     
     return JSONResponse(content={"error": "Transcription failed"}, status_code=500)
+
